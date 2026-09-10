@@ -252,7 +252,8 @@ with both geographic position and environmental gradients,
 so that it can infer climate of origin directly from genotype
 when allele frequencies covary with climate.
 We pair the model with a feature attribution method,
-\texttt{SHAP} \citep{lundberg_shap_2017}, % First time mentioning SHAP so consider movinb the whole name here
+SHapley Additive exPlanations
+(\texttt{SHAP}) \citep{lundberg_shap_2017},
 to see which input SNPs each prediction depends on,
 and so which variants contribute most
 to adaptive differentiation across the landscape.
@@ -287,13 +288,14 @@ in the 1960s and 1970s \citep{usdaforestservice_tree_1973},
 and later revised to incorporate climatic factors
 and experimental evidence from reciprocal transplant trials
 (e.g., \citealp{randall_forest_1996, stclair_seedlot_2022}).
-This combination of strong local adaptation and a long history
-of ecological and silvicultural study
-makes \dfir a natural bridge
-between controlled simulations and real-world management applications. % ARC - I think this should be the last sentence of the paragraph. Maybe moving the next one about the seed zones up and then finishing with this summary about Dfir.
 Seed zones also give us something simulations cannot,
 which is a standard already in use by managers
 for deciding whether a predicted climate is close enough to the true one.
+This combination of strong local adaptation and a long history
+of ecological and silvicultural study
+makes \dfir a natural bridge
+between controlled simulations and real-world management applications.
+
 
 To our knowledge \ecolocator is the first open-source tool
 that infers both the geographic origin of a genotype
@@ -552,28 +554,20 @@ feature attribution (\Cref{fig:ld-decay}).
 To explore whether the genomic distribution of adaptive loci
 influences the detectability of local adaptation,
 we varied the arrangement of QTLs along the chromosome
-across three genetic architectures. In the first,
-all QTLs were clustered in a single 200 kb window
-\sout{(bases 400,000--599,999; 20\% of the chromosome),} centered at its midpoint.
-In the second,
-QTLs were split across three evenly-spaced 100 kb windows (10\% of the chromosome each, 30\% total),
-\sout{centered at bases 250,000, 500,000, and 750,000
-(the 25\%, 50\%, and 75\% positions)}.
-% ARC - OK, for this I am not sure if saying "25% positions" is the most accurate
-% term. I think of the % about being a proportion of the span. The window does
-% not span 25% of the total chromsoome. Instead, it starts one quarter of the way.
-% I do admit that the two can be similarly interpreted which makes this confusing.
-% One suggestion here is that you change the text to say, e.g., "three evenly-spaced
-% 100 kbp windows, each spanning 10\% of the chromosome length". You don't mention
-% the positions and percentages here. Instead, you have a supplemental figure that
-% shows how they are organized. Something like you have in Fig 2 but only showing
-% the architecture in more detail, which a dedicated grid and drawn to scale.
-% Happy to chat more about this.
-In the third, QTLs were split across five evenly-spaced windows of the same size, % 100 kb? total span?
-\sout{centered at approximately bases 166,667, 333,333, 500,000, 666,667, and 833,333
-(the 17\%, 33\%, 50\%, 67\%, and 83\% positions)}.
-% ARC - Same here, "split across five evenly spaced 100 kbp windows (Fig SX)",
-% removing the number and percentages, referring to the Sup figure instead.
+across three genetic architectures. 
+In the first, 
+all QTLs were clustered in a single 200 kb window 
+(bases 400,000–599,999; spanning 20\% of the chromosome), 
+centered at the midpoint of the chromosome. 
+In the second, 
+QTLs were split across three evenly-spaced 100 kb windows 
+(10\% of the chromosome each, 30\% total span), 
+centered at bases 250,000, 500,000, and 750,000. 
+In the third, 
+QTLs were split across five evenly-spaced 100 kb windows 
+(10\% of the chromosome each, 50\% total span), 
+centered at approximately bases 166,667, 333,333, 500,000, 666,667, and 833,333.
+
 These treatments allowed us to test whether adaptive 
 signals are easier to detect when concentrated in 
 specific genomic regions versus dispersed more broadly 
@@ -702,10 +696,8 @@ They give us a useful contrast to the harder spatial scenarios.
 \subsection{Feature attribution}
 
 To quantify the contribution of individual genetic features
-to \ecolocator's predictions,
-we applied SHapley Additive exPlanations (SHAP) using the Python
-% ARC - See my comment above about moving the full name for SHAP
-\texttt{SHAP} package (\texttt{v.$\geq$0.47.0}) \citep{lundberg_shap_2017},
+to \ecolocator's predictions, we use the \texttt{SHAP} Python
+package (\texttt{v.$\geq$0.47.0}) \citep{lundberg_shap_2017},
 which assigns importance scores
 based on each feature's marginal contribution to the model output
 across all possible feature coalitions.
@@ -831,13 +823,17 @@ of window-level Z-scores were modeled
 as functions of SNP count.
 Corrected $p$-values (\texttt{Z\_pVal})
 were then obtained under the assumption of normality.
-% ARC - I know it is short, but maybe having this with its own
-% \paragraph{Top-candidate method} header
-In parallel,
-the top-candidate method identifies windows
-enriched for highly significant SNPs
-using a binomial test based on the upper tail
-of the SNP-level $p$-value distribution.
+
+\paragraph{Top-candidate method.}
+Following \citet{yeaman_convergent_2016},
+we ranked SNPs genome-wide by their association p-values
+and designated those in the top 1\% (i.e. above the 99th percentile) 
+as candidate SNPs.
+For each window, we then used a one-sided binomial test 
+to assess whther the observed number of 
+candidate SNPs exceeded the number expected by chance, 
+given the window's total SNP count and the genome-wide candidate rate. 
+
 
 \paragraph{Integration across methods.}
 For each simulation replicate,
@@ -890,8 +886,18 @@ sampled across Oregon and Washington.
 The maternal parents of these trees were woodsrun (unimproved) `plus' trees,
 identified through field observations as well-adapted to their local environment and exceptional
 for diameter, height, and stem form. Leaf-derived DNA from individual trees was genotyped using the 58K \dfir
-Axiom Affymetrix SNP array \citep{howe_axiom_2020}, yielding 18,732 SNPs
-after filtering. % ARC - this might be in the publication, but info for filtering? I am curious about the missing data proportions since the data processing steps involves an imputation step. This could be as simple as "removing variant with more than X% missing genotypes".
+Axiom Affymetrix SNP array \citep{howe_axiom_2020}.
+Genotype calls were generated in Axiom Analysis Suite (v.5.4)
+using a high-stringency workflow (dQC $\geq$ 0.90, call rate $\geq$ 0.97),
+supplemented by a secondary workflow for samples of slightly lower quality
+(dQC > 0.82, call rate $\geq$ 0.90).
+We restricted analysis to SNPs classified as PolyHighResolution ---
+Axiom's designation for markers with clearly resolved,
+high-confidence biallelic genotype clusters --- yielding 18,732
+loci and excluding lower-confidence and off-target variants.
+Within this marker set, missing genotype rates ranged from approximately 
+0.15\% to 9.85\% across samples and were resolved using the 
+imputation procedure described above.
 The \dfir genome is large and incompletely
 assembled ($\sim$16 Gb; \cite{neale_douglas-fir_2017}),
 so genomic positions of array SNPs are unknown,
@@ -1251,7 +1257,7 @@ the precision--recall curves were constructed by pooling SNPs
 across all simulation replicates,
 so the resulting AUC-PR values reflect global discriminatory performance.
 We also calculated replicate-level AUC-PR values,
-shown as violin plots. % I removed text here since it is in the caption
+shown as violin plots.
 Thus,
 the pooled AUC-PR values summarize overall variant-level discrimination
 across all replicates,
@@ -1263,44 +1269,44 @@ SHAP-based attribution consistently recovered
 a higher proportion of true adaptive variants
 than either comparison method in the pooled precision--recall analysis.
 Under genetic architecture 1,
-SHAP achieved a pooled AUC-PR of 0.173, % Is this number explicitly in Fig 4? For GA1 I see ELxSHAP=0.21. Maybe this is not the right number?
-substantially exceeding \texttt{WZA} (0.079)
-and the top-candidate approach (0.078),
-and outperforming the random expectation (0.043).
+SHAP achieved a pooled AUC-PR of 0.1734,
+substantially exceeding \texttt{WZA} (0.0911)
+and the top-candidate approach (0.0890),
+and outperforming the random expectation (0.0426).
 Under genetic architecture 2,
 SHAP again showed improved performance
-(pooled AUC-PR = 0.187) % Same here.
-relative to \texttt{WZA} (0.065)
-and the top-candidate method (0.063),
-with a random baseline of 0.051.
+(pooled AUC-PR = 0.1870)
+relative to \texttt{WZA} (0.0832)
+and the top-candidate method (0.0767),
+with a random baseline of 0.0514.
 Similarly,
 under genetic architecture 3,
-SHAP yielded a pooled AUC-PR of 0.179, % And here too
-compared to 0.082 for \texttt{WZA}
-and 0.079 for the top-candidate approach
-(random = 0.071).
+SHAP yielded a pooled AUC-PR of 0.1786,
+compared to 0.0946 for \texttt{WZA}
+and 0.0874 for the top-candidate approach
+(random = 0.0713).
 The replicate-level violin plots showed the same overall ranking.
 Under genetic architecture 1, 
 \ecolocator\texttimes{}SHAP had the highest mean AUC-PR
-(mean AUC-PR = 0.208),
+(mean AUC-PR = 0.2076),
 followed by the top-candidate method
-(mean AUC-PR = 0.128)
+(mean AUC-PR = 0.1281)
 and \texttt{WZA}
-(mean AUC-PR = 0.121).
+(mean AUC-PR = 0.1212).
 Under genetic architecture 2,
 \ecolocator\texttimes{}SHAP again showed the highest mean performance
-(mean AUC-PR = 0.221),
+(mean AUC-PR = 0.2211),
 followed by the top-candidate method
-(mean AUC-PR = 0.103)
+(mean AUC-PR = 0.1032)
 and \texttt{WZA}
-(mean AUC-PR = 0.100).
+(mean AUC-PR = 0.0995).
 Under genetic architecture 3,
 \ecolocator\texttimes{}SHAP maintained the highest mean AUC-PR
-(mean AUC-PR = 0.205),
+(mean AUC-PR = 0.2054),
 followed by \texttt{WZA}
-(mean AUC-PR = 0.113)
+(mean AUC-PR = 0.1133)
 and the top-candidate method
-(mean AUC-PR = 0.105).
+(mean AUC-PR = 0.1049).
 Performance differences were most pronounced
 at low recall values,
 where SHAP maintained substantially higher precision,
@@ -1320,46 +1326,36 @@ this same spatially correlated design (\Cref{fig:gea-comparison-regimes}).
 In the discrete-space Wright--Fisher simulations,
 \ecolocator\texttimes{}SHAP showed particularly strong recovery
 of adaptive loci,
-achieving a pooled AUC-PR of 0.843 % OK, this one matches the fig
+achieving a pooled AUC-PR of 0.8430
 relative to a random baseline of 0.0149
-(\Cref{fig:gea-comparison}, panel d).
+(\Cref{fig:gea-comparison}, column d).
 \texttt{WZA} also performed well in this regime
-(pooled AUC-PR = 0.498),
+(pooled AUC-PR = 0.4983),
 whereas the top-candidate method showed substantially lower recovery
-(pooled AUC-PR = 0.071).
+(pooled AUC-PR = 0.0714).
 Replicate-level AUC-PR values followed the same ordering,
 with \ecolocator\texttimes{}SHAP showing the highest mean performance
-(mean AUC-PR = 0.906),
+(mean AUC-PR = 0.9061),
 followed by \texttt{WZA}
-(mean AUC-PR = 0.619)
+(mean AUC-PR = 0.6191)
 and the top-candidate method
-(mean AUC-PR = 0.102).
+(mean AUC-PR = 0.1017).
 
 \begin{figure}[H]
     \adjustimage{width=1.1\textwidth,center}{figures/GEAcomparisonfig.pdf}
-    % One comment here about the axis labels. I think having
-    % the "recall" in the X-axis at the very bottom is a bit
-    % confusing, since it only applies to the X-axis of the 
-    % top row. The X-axis for the bottom row are the
-    % categorical values for the three analyses. Then you 
-    % have the architecture diagrams on the X too, adding to
-    % the confusion. I think you can move the diagrams to the
-    % top (next to the a, b, ...), since it applies to all
-    % the panels in the column. The "Recall" should be only 
-    % for the top row. The X-axis label for the bottom row 
-    % could then be "method" or something like that.
     \caption{AUC-PR curve comparison between SHAP, \texttt{WZA}, and top-candidate methods.
-    Each column represents a different simulation regime. \textbf{Panel a)} represents
-    genetic architecture 1, \textbf{Panel b)} represents genetic architecture 2,
-    and \textbf{Panel c)} represents genetic architecture 3. \textbf{Panel d)}
+    Each column represents a different simulation regime. \textbf{Column a)} represents
+    genetic architecture 1, \textbf{Column b)} represents genetic architecture 2,
+    and \textbf{Column c)} represents genetic architecture 3. \textbf{Column d)}
     represents the Wright--Fisher, discrete-space simulation regime. The top row
-    shows precision-recall curves constructed by pooling SNPs across all simulation
-    replicates within each regime; the area under each pooled curve reflects
-    global discriminatory performance and is not directly comparable to the
-    per-replicate means shown below. The bottom row shows violin plots of
-    per-replicate AUC-PR values, where each point represents one simulation
-    replicate and the horizontal bar indicates the mean; this view captures
-    replicate-to-replicate variability in performance. In all panels,
+    shows violin plots of per-replicate AUC-PR values, where each point represents
+    one simulation replicate, the horizontal bar indicates the mean, and the
+    annotated value gives the mean AUC-PR for each method; this view captures
+    replicate-to-replicate variability in performance. The bottom row shows
+    precision-recall curves constructed by pooling SNPs across all simulation
+    replicates within each regime, with the annotated AUC-PR giving the area
+    under each pooled curve; this reflects global discriminatory performance
+    and is not directly comparable to the per-replicate means shown above. In all panels,
     purple indicates \ecolocator\texttimes{}SHAP, yellow indicates \texttt{WZA},
     and blue indicates the top-candidate method.}
     \label{fig:gea-comparison}
@@ -1446,7 +1442,7 @@ These values are all larger than those estimated using ClimateNA predictions fro
 
 \begin{table}[ht]
   \centering
-  \caption{Comparison of \ecolocator and Location+ClimateNA predictions across climate variables using the fixed-zone approach.} % ARC - I think you could add something here to differentiate it from Table 2. I added it to the header as an example.
+  \caption{Comparison of \ecolocator and Location+ClimateNA predictions across climate variables using the fixed-zone approach.}
   \label{tab:table1}
   \begin{tabular}{lcccc}
   \hline
@@ -1474,7 +1470,7 @@ geographic predictions (\Cref{tab:table2}).
 
 \begin{table}[ht]
   \centering
-  \caption{Comparison of \ecolocator and Location+ClimateNA predictions across climate variables using the focal point approach.} % Same here, adding to differentiate from Table 1
+  \caption{Comparison of \ecolocator and Location+ClimateNA predictions across climate variables using the focal point approach.}
   \label{tab:table2}
   \begin{tabular}{lcccc}
   \hline
@@ -1791,7 +1787,7 @@ In nature the two usually covary, and when they do,
 attribution alone cannot tell us whether a high-attribution locus
 reflects environmental selection, demographic structure,
 linkage to a selected locus, or some mix of these
-(we return to this under Strengths and limitations). % Maybe add a link to this?
+(we return to this under \hyperref[sec:strengths-limitations]{Strengths and limitations})).
 High-attribution loci should therefore be read as candidate
 genomic regions associated with the predicted gradient,
 not as confirmed targets of adaptation.
@@ -1984,6 +1980,7 @@ and they make interpreting predictions within the biological
 and management context of each application essential.
  
 \subsection{Strengths and limitations}
+\label{sec:strengths-limitations}
 
 A key strength of \ecolocator is its multitask design, 
 which simultaneously models geographic and environmental variation. 
