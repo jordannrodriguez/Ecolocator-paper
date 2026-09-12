@@ -74,6 +74,48 @@ and climate of origin from genotypes}
 
 %%%%%% Abstract %%%%%%
 \begin{abstract}
+Climate change is increasingly disrupting the relationship between 
+locally adapted populations and the environments in which they evolved, 
+creating an urgent need for tools that connect genomic variation to climate. 
+For individuals from locally adapted populations, 
+predicting the climate to which their genotypes are best matched provides a 
+reference for evaluating suitability under present and future conditions.
+Common-garden and provenance trials remain the gold standard 
+for characterizing local adaptation, 
+but their time and resource requirements limit how broadly they can be applied. 
+Genomic approaches provide a complementary path, 
+with genotype--environment association (GEA) methods identifying environmentally 
+associated loci and 
+machine-learning models demonstrating that geographic origin can be predicted 
+directly from genotypes. 
+Here we introduce \ecolocator, 
+a supervised neural network that jointly predicts geographic location 
+and climate of origin from genotypes. 
+In spatially explicit simulations, 
+increasing dispersal reduced both geographic and environmental prediction accuracy, 
+whereas weakening selection reduced environmental prediction while leaving 
+geographic prediction largely unchanged, consistent with distinct spatial and adaptive signals. 
+SHAP-based feature attribution preferentially ranked adaptive loci and outperformed 
+benchmark GEA approaches across the simulation regimes tested.
+To test our model in a natural system, 
+we applied \ecolocator to coastal \dfir (\textit{Pseudotsuga menziesii var. menziesii}). 
+Under leave-one-out cross-validation, 
+\ecolocator predicted 
+latitude with $R^2=0.83$, 
+longitude with $R^2=0.75$, 
+and three climate variables with $R^2=0.52$--$0.72$. 
+Importantly, climate predictions made directly from genotypes were more accurate 
+than climates obtained by first predicting geographic origin and then looking up 
+the historical climate at that location, showing that \ecolocator recovers genotype--climate 
+signals that cannot be reconstructed from geographic prediction alone. 
+Most predictions also fell within established seed-zone climate tolerances, 
+placing prediction errors within ranges already used to guide seed-transfer decisions. 
+Available through a Python API and command-line interface, 
+\ecolocator is open-source software that recovers spatial and 
+climate-associated genomic signals and translates them into interpretable 
+information for studying and managing locally adapted populations 
+under rapid environmental change. %JR- Im unsure if i really hate the whole abstract, maybe I've tried too hard for too long on it. Need fresh eyes. Also, Im sure it needs to be way shortened. rip
+
 
 
 \end{abstract}
