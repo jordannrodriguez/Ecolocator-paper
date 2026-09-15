@@ -91,30 +91,23 @@ directly from genotypes.
 Here we introduce \ecolocator, 
 a supervised neural network that jointly predicts geographic location 
 and climate of origin from genotypes. 
-In spatially explicit simulations, 
-increasing dispersal reduced both geographic and environmental prediction accuracy, 
-whereas weakening selection reduced environmental prediction while leaving 
-geographic prediction largely unchanged, consistent with distinct spatial and adaptive signals. 
-SHAP-based feature attribution preferentially ranked adaptive loci and outperformed 
-benchmark GEA approaches across the simulation regimes tested.
-To test our model in a natural system, 
-we applied \ecolocator to coastal \dfir (\textit{Pseudotsuga menziesii var. menziesii}). 
-Under leave-one-out cross-validation, 
-\ecolocator predicted 
-latitude with $R^2=0.83$, 
-longitude with $R^2=0.75$, 
-and three climate variables with $R^2=0.52$--$0.72$. 
-Importantly, climate predictions made directly from genotypes were more accurate 
-than climates obtained by first predicting geographic origin and then looking up 
-the historical climate at that location, showing that \ecolocator recovers genotype--climate 
-signals that cannot be reconstructed from geographic prediction alone. 
-Most predictions also fell within established seed-zone climate tolerances, 
-placing prediction errors within ranges already used to guide seed-transfer decisions. 
-Available through a Python API and command-line interface, 
-\ecolocator is open-source software that recovers spatial and 
-climate-associated genomic signals and translates them into interpretable 
-information for studying and managing locally adapted populations 
-under rapid environmental change. %JR- Im unsure if i really hate the whole abstract, maybe I've tried too hard for too long on it. Need fresh eyes. Also, Im sure it needs to be way shortened. rip
+In both spatially explicit (non-Wright--Fisher) and deme-based (Wright--Fisher) simulations,
+\ecolocator accurately recovered geographic location and environment of origin from genotypes,
+and SHAP-based feature attribution identified adaptive loci more reliably than benchmark GEA methods.
+Applied to coastal \dfir (\textit{Pseudotsuga menziesii var. menziesii}),
+\ecolocator predicted geographic origin ($R^2=0.75$--$0.83$) and climate of origin
+($R^2=0.52$--$0.72$) under leave-one-out cross-validation.
+Notably, climate predicted directly from genotypes outperformed climate inferred by first
+predicting geographic origin, showing that \ecolocator captures genotype--climate signal
+that cannot be recovered from geography alone.
+These prediction errors fell within the tolerances used in existing seed-transfer guidelines,
+demonstrating that \ecolocator's predictions are precise enough for practical use, an approach
+readily extendable to other species and conservation contexts.
+Available through a Python API and command-line interface,
+\ecolocator is open-source software that recovers spatial and
+climate-associated genomic signals and translates them into interpretable
+information for studying and managing populations
+under rapid environmental change.
 
 
 
