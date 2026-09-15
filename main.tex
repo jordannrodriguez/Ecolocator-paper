@@ -2077,7 +2077,16 @@ structure can inadvertently remove true adaptive signal along with neutral
 confounders \citep{lotterhos_recombination_2019, booker_wza_2024}. 
 Rather than regressing geographic structure out prior to environmental prediction, 
 \ecolocator models geographic and environmental variation as related but distinct
-prediction tasks.
+\ecolocator takes a different route: rather than regressing geographic structure out, it models geographic and environmental variation as related but distinct prediction tasks. 
+However, this does not resolve the confounding. When climate
+covaries with geography, non-causal but spatially structured loci can still
+ receive high attribution for climate simply because they predicts location, and
+ \ecolocator does not attempt to ask if given locus carries environmental signal beyond
+  what spatial structure explains, as in more classic GEA methods. 
+  Attribution from \ecolocator is best interpretted as
+  identifying loci that are informative for the joint prediction task, with the
+  question of which of those are adaptive left to the follow-up analyses
+  discussed above.
 
 Furthermore, the multitask framework
 is naturally suited to systems
