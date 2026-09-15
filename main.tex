@@ -680,10 +680,12 @@ between \ecolocator and existing GEA methods.
 Following \citet{booker_wza_2024},
 we simulated a two-dimensional stepping-stone metapopulation
 composed of discrete demes arranged on a grid,
-with a constant population size per deme
+with a constant population size per deme ($N=100$)
 under Wright--Fisher dynamics.
-Migration was restricted to neighboring demes,
-producing a pattern of isolation by distance
+Migration was restricted to neighboring demes at a rate of
+$m=0.0375$ per generation in each cardinal direction
+(demes at grid edges and corners had correspondingly fewer
+migrant sources), producing a pattern of isolation by distance
 and spatial genetic structure across the landscape.
 Environmental heterogeneity was defined
 using the British Columbia (BC) map of climatic variation,
@@ -704,8 +706,8 @@ experience genic selection,
 in which each copy of the derived allele 
 multiplies fitness by $(1 + s\theta)$, 
 where $\theta$ is the local phenotypic optimum assigned to that
-deme and $s$ is a fixed selection coefficient, with 
-heterozygotes receiving half this effect. 
+deme and $s$ is a fixed selection coefficient ($s=0.0136$), with
+heterozygotes receiving half this effect.
 Because $\theta$ is positive in demes where the 
 derived allele is advantageous and negative where it is 
 disadvantageous, selection at each locus consistently 
@@ -969,6 +971,13 @@ These variables capture the primary axes of climate variation
 across the species' range and correspond directly to the selection
 pressures (e.g., winter cold temperatures; aridity) that are
 managed and mitigated by USFS seed zones.
+To characterize the spatial scale over which each climate variable
+varies, we computed a simple spatial correlogram: for each variable,
+we standardized true values across all 348 sampled trees, calculated
+the product of standardized values for every pair of trees, and
+averaged these products within geographic distance bins. We report
+the approximate distance at which this average first falls below 0.1
+as the effective range of spatial autocorrelation for each variable.
 
 \paragraph{Model training and feature attribution.}
 Prior to model training,
@@ -1297,9 +1306,8 @@ and the top-candidate method \citep{yeaman_convergent_2016}.
 
 To quantify detection accuracy,
 we calculated empirical FDR scores
-from SHAP rankings --- comparable to a $p$-value for ranking variants by
-evidence of adaptation, but calibrated against known true adaptive status
-rather than a null distribution (see Methods) ---
+from SHAP rankings, calibrated against known true adaptive status
+rather than a null distribution (see Methods),
 and evaluated performance using precision--recall curves
 (\Cref{fig:gea-comparison}). We refer to this \ecolocator-plus-SHAP pipeline
 as \ecolocator\texttimes{}SHAP below, since SHAP attribution is what turns
@@ -1603,9 +1611,9 @@ targets, not evidence that those loci are independently causal for both.
 Functional annotation of the high-attribution SNPs revealed additional
 differences among prediction targets. Because Axiom array probes are designed
 from cDNA sequence (see Methods), each genotyped SNP already has a known
-transcript-level origin, so ``loci'' here refers to SNPs anchored within or
-near an expressed gene rather than an anonymous genomic position matched to
-the nearest annotated gene. Among loci with informative annotations,
+transcript-level origin, so ``loci'' here refers to SNPs anchored within an
+expressed gene's transcript sequence, rather than an anonymous genomic
+position matched to the nearest annotated gene. Among loci with informative annotations,
 latitude-associated candidates included putative homologs involved in 
 phytochrome-mediated light signaling, circadian and seasonal regulation, 
 and developmental timing, including \textit{PIF3}, \textit{FPA}, WNK-family kinases, 
@@ -2007,7 +2015,7 @@ in the southern Cascades than in the northern Cascades
 (mean $\lvert\text{error}\rvert$ 1.57$^\circ$C vs.\ 1.03$^\circ$C;
 Mann--Whitney $p=2.7\times10^{-4}$), the opposite of what would be expected
 if steep, complex terrain alone were driving these errors, since the
-northern Cascades are topographically steeper. This pattern instead
+northern Cascades are topographically steeper \citep{haugerud2009}. This pattern instead
 points to introgression with interior \dfir
 (\textit{Pseudotsuga menziesii} var.\ \textit{glauca}) \citep{stclair_genecology_2005}
 as the more likely explanation: coastal-interior admixture is more
@@ -2024,42 +2032,6 @@ including ancestry transitions,
 complex topography,
 and uncertainty in historical source records \citep{rehmann2024evaluating}.
 
-More broadly,
-the approach is not limited to \dfir
-or to species with extensive prior characterization.
-Any system with georeferenced genotypes and associated environmental data
-can be analysed with \ecolocator,
-making it a useful tool for less-studied species
-where common-garden data are scarce or absent.
-In these systems,
-even weak or uneven predictive performance may be informative.
-Poor environmental prediction may suggest that genetic variation
-is not strongly tracking the environmental variable being modeled,
-whereas poor geographic prediction may indicate weak population structure,
-high gene flow,
-or limited spatial signal in the sampled genomic data.
-Interpreting these predictions,
-however,
-will require careful attention
-to the provenance,
-sampling design,
-and reproductive biology of the focal system.
-For highly curated datasets,
-such as provenance trials or plus-tree collections,
-\ecolocator may provide a strong test of climate-of-origin prediction
-under conditions where genotype--environment relationships are expected
-to be pronounced.
-For less-characterized datasets,
-predictions may be more sensitive to mixed ancestry,
-family structure,
-uncertain source records,
-or mismatch between sampled tissue and the individual or population
-whose origin is being inferred.
-These considerations do not preclude application,
-but they set the conditions under which predictions can be trusted,
-and they make interpreting predictions within the biological
-and management context of each application essential.
- 
 \subsection{Strengths and limitations}
 \label{sec:strengths-limitations}
 
@@ -2139,21 +2111,8 @@ not fully captured here.
 
 Several extensions of this work merit exploration.
 First, our simulations assume a purely additive genetic architecture,
-but epistasis and pleiotropy are pervasive features
-of quantitative trait variation
-\citep{mackay_pleiotropy_2024}
-that can substantially alter the outcome
-of genome scans for local adaptation
-\citep{jones_epistasis_2019}.
-Epistatic interactions may generate adaptive allele combinations
-whose effects are invisible to single-locus attribution methods,
-while pleiotropic constraints can limit
-or redirect the response to spatially varying selection
-\citep{yeaman_polygenic_2022}.
-Extending simulations to include non-additive architectures
-would clarify whether \ecolocator's prediction accuracy
-and feature attribution remain robust
-when the genotype--phenotype map is more complex.
+and whether prediction accuracy and attribution hold up under
+non-additive genotype--phenotype maps remains untested.
 
 Second, expanding the environmental complexity
 of simulations to include multiple correlated environmental axes,
@@ -2178,7 +2137,11 @@ this could help researchers and managers prioritize
 which environmental variables warrant the greatest consideration
 when designing management strategies,
 seed-transfer guidelines,
-or subsequent experimental studies.
+or subsequent experimental studies. The same logic extends to geographic
+prediction: poor geographic accuracy can indicate weak population
+structure, high gene flow, or limited spatial signal in the sampled
+genomic data, making prediction accuracy itself a diagnostic signal
+for species that lack common-garden data or prior characterization.
 
 Third, the framework could also be extended
 to future climate applications.
